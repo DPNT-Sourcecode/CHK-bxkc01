@@ -10,7 +10,6 @@ class CheckoutSolution:
         if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
         
-        
         # Handle F
         group_of_F3 = count['F'] // 3
         rem_F3 = count['F'] % 3
