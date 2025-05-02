@@ -1,36 +1,15 @@
 from collections import Counter
 
-PRICE_A = 50
-PRICE_B = 30
-PRICE_C = 20
-PRICE_D = 15
-PRICE_E = 40
-
-
 class CheckoutSolution:
 
     # skus = unicode string
     def checkout(self, skus):
         count = Counter(skus)
+        total = 0
 
         if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
         
-        # Could have a dedicated function for each SKU, depending on the complexity of the offers
-        # but for now, we can handle them in a single function
-        total, count = self.handle_offers(count)
-            
-        total += count['A'] * PRICE_A 
-        total += count['B'] * PRICE_B
-        total += count['C'] * PRICE_C
-        total += count['D'] * PRICE_D
-        total += count['E'] * PRICE_E
-        
-        return total
-
-    def handle_offers(self, count: Counter) -> int:
-        total = 0
-
         while count['E'] >= 2 and count['B'] >= 1:
             count['B'] -= 1
             count['E'] -= 2
@@ -47,5 +26,11 @@ class CheckoutSolution:
         while count['B'] >= 2:
             count['B'] -= 2
             total += 45
-
-        return total, count
+            
+        total += count['A'] * 50 
+        total += count['B'] * 30
+        total += count['C'] * 20
+        total += count['D'] * 15
+        total += count['E'] * 40
+        
+        return total
