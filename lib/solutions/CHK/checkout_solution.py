@@ -7,7 +7,7 @@ class CheckoutSolution:
         count = Counter(skus)
         total = 0
 
-        if any(not sku.isalpha() and not sku.isupper() for sku in skus):
+        if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
 
         while count['A'] >= 3:
@@ -24,4 +24,5 @@ class CheckoutSolution:
         total += count['D'] * 15
         
         return total
+
 
