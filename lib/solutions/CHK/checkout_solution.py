@@ -19,7 +19,13 @@ class CheckoutSolution:
             count['B'] -= 2
             total += 45
 
-        total += self.handle_A(count, total)
+        group_of_5 = count['A'] // 5
+        rem_5 = count['A'] % 5 
+
+        group_of_3 = rem_5 // 3
+        rem_3 = rem_5 % 3
+
+        total += group_of_5 * 200 + group_of_3 * 130 + rem_3 * 50
             
         total += count['B'] * 30
         total += count['C'] * 20
@@ -31,11 +37,4 @@ class CheckoutSolution:
 
     def handle_A(self, count: Counter, total: int) -> int:
         """ Divide into groups of 3 and 5, calculate the min total"""
-        countA = count['A']
-        group_of_5 = countA // 5
-        rem_5 = count % 5 
-
-        group_of_3 = rem_5 // 3
-        rem_3 = rem_5 % 3
-
-        return group_of_5 * 200 + group_of_3 * 130 + rem_3 * 50
+       
