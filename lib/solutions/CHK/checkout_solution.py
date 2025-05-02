@@ -12,10 +12,10 @@ class CheckoutSolution:
         
         
         # Handle F
-        group_of_3 = count['F'] // 3
-        rem_3 = count['F'] % 3
+        group_of_F3 = count['F'] // 3
+        rem_F3 = count['F'] % 3
 
-        total += group_of_3 * 20 + rem_3 * 10
+        total += group_of_F3 * 20 + rem_F3 * 10
 
         # Handle E
         while count['E'] >= 2 and count['B'] >= 1:
@@ -29,23 +29,19 @@ class CheckoutSolution:
             total += 45
 
         # Handle A
-        group_of_5 = count['A'] // 5
-        rem_5 = count['A'] % 5 
+        group_of_A5 = count['A'] // 5
+        rem_A5 = count['A'] % 5 
 
-        group_of_3 = rem_5 // 3
-        rem_3 = rem_5 % 3
+        group_of_A3 = rem_A5 // 3
+        rem_A3 = rem_A5 % 3
 
-        total += group_of_5 * 200 + group_of_3 * 130 + rem_3 * 50
+        total += group_of_A5 * 200 + group_of_A3 * 130 + rem_A3 * 50
             
         # the remaining skus
         total += count['B'] * 30
         total += count['C'] * 20
         total += count['D'] * 15
         total += count['E'] * 40
-        
-        return total
-    
 
-    def handle_A(self, count: Counter, total: int) -> int:
-        """ Divide into groups of 3 and 5, calculate the min total"""
+        return total
        
