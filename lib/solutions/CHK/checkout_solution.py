@@ -16,7 +16,9 @@ class CheckoutSolution:
         if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
         
-        total = self.handle_offers(count)
+        # Could have a dedicated function for each SKU, depending on the complexity of the offers
+        # but for now, we can handle them in a single function
+        total, count = self.handle_offers(count)
             
         total += count['A'] * PRICE_A 
         total += count['B'] * PRICE_B
@@ -31,18 +33,19 @@ class CheckoutSolution:
 
         while count['E'] >= 2 and count['B'] >= 1:
             count['B'] -= 1
+            count['E'] -= 2
             total += 80
 
-        while count['A'] % 5 == 0:
-            count['A'] -= 5
-            total += 200
-
         while count['A'] >= 3:
-            count['A'] -= 3
-            total += 130
+            if count['A'] == 5:
+                count['A'] = 0
+                total += 200
+            else:
+                count['A'] -= 3
+                total += 130
 
         while count['B'] >= 2:
             count['B'] -= 2
             total += 45
 
-        return total
+        return total, count
