@@ -14,23 +14,28 @@ class CheckoutSolution:
             count['B'] -= 1
             count['E'] -= 2
             total += 80
-
-        while count['A'] >= 3:
-            if count['A'] == 5:
-                count['A'] = 0
-                total += 200
-            else:
-                count['A'] -= 3
-                total += 130
-
+        
         while count['B'] >= 2:
             count['B'] -= 2
             total += 45
+
+        total += self.handle_A(count, total)
             
-        total += count['A'] * 50 
         total += count['B'] * 30
         total += count['C'] * 20
         total += count['D'] * 15
         total += count['E'] * 40
         
         return total
+    
+
+    def handle_A(self, count: Counter, total: int) -> int:
+        """ Divide into groups of 3 and 5, calculate the min total"""
+        countA = count['A']
+        group_of_5 = countA // 5
+        rem_5 = count % 5 
+
+        group_of_3 = rem_5 // 3
+        rem_3 = rem_5 % 3
+
+        return group_of_5 * 200 + group_of_3 * 130 + rem_3 * 50
