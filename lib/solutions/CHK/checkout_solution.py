@@ -3,180 +3,159 @@ from dataclasses import dataclass, field
 from typing import Callable, List, Tuple
 
 
-ITEMS = {
-"A":50,
-"B":30,
-"C":20,
-"D":15,
-"E":40,
-"F":10,
-"G":20,
-"H":10,
-"I":35,
-"J":60,
-"K":80,
-"L":90,
-"M":15,
-"N":40,
-"O":10,
-"P":50,
-"Q":30,
-"R":50,
-"S":30,
-"T":20,
-"U":40,
-"V":50,
-"W":20,
-"X":90,
-"Y":10,
-"Z":50,
-
+PRICE = {
+    "A": 50,
+    "B": 30,
+    "C": 20,
+    "D": 15,
+    "E": 40,
+    "F": 10,
+    "G": 20,
+    "H": 10,
+    "I": 35,
+    "J": 60,
+    "K": 80,
+    "L": 90,
+    "M": 15,
+    "N": 40,
+    "O": 10,
+    "P": 50,
+    "Q": 30,
+    "R": 50,
+    "S": 30,
+    "T": 20,
+    "U": 40,
+    "V": 50,
+    "W": 20,
+    "X": 90,
+    "Y": 10,
+    "Z": 50,
 }
 
-def buy_x_product_for_offer_price(item: str, qty: int, offer_price: int) -> Callable:
-    def offer(items: list[str]) -> Tuple[int, list[str]]:
-        """
-        Calculate the discounted total for a given item and remove the items from the list.
-        """
-        count = items.count(item)
-        groups = count // qty
-        remainder = count % qty
 
-        total = groups * offer_price + remainder * item.price
+@dataclass
+class Discount:
+    item: str
+    qty: int
+    price: int
 
-        items = [i for i in items if i != item] 
-        return total, items
-    return offer
 
-def buy_x_get_y_free(item:str , x_qty: int, y_item: str, y_qty: int) -> Callable:
+@dataclass
+class Offer:
+    item: str
+    qty: int
+    offer_item: str
+    offer_qty: int
+
+
+DISCOUNTS = [
+    Discount("A", 5, 200),
+    Discount("A", 3, 130),
+    Discount("B", 2, 45),
+    Discount("H", 2, 45),
+    Discount("H", 10, 80),
+    Discount("K", 2, 150),
+    Discount("P", 5, 200),
+    Discount("Q", 3, 80),
+    Discount("V", 2, 90),
+    Discount("V", 3, 130),
+]
+
+OFFERS = [
+    Offer("E", 2, "B", 1),
+    Offer("F", 3, "F", 1),
+    Offer("N", 3, "M", 1),
+    Offer("R", 3, "Q", 1),
+    Offer("U", 3, "U", 1),
+]
+
+# def buy_x_product_for_offer_price(item: str, qty: int, offer_price: int) -> Callable:
+#     def offer(items: list[str]) -> Tuple[int, list[str]]:
+#         """
+#         Calculate the discounted total for a given item and remove the items from the list.
+#         """
+#         count = items.count(item)
+#         groups = count // qty
+#         remainder = count % qty
+
+#         total = groups * offer_price + remainder * item.price
+
+#         items = [i for i in items if i != item]
+#         return total, items
+#     return offer
+
+def buy_x_get_y_free(x_item:str , x_qty: int, y_item: str, y_qty: int) -> Callable:
     """
     Buy x amount of item and get y amount of another item for free.
     """
-    def offer(items: list[str]) -> Tuple[int, list[str]]:
+    def offer(items: list[str]) -> int:
         """
         Calculate the discounted total for a given item and remove the items from the list.
         """
-        count_x = items.count(item)
+        count_x = items.count(x_item)
         count_y = items.count(y_item)
-        
+
         groups = count_x // x_qty * y_qty
         free_items = min(count_y, groups)
 
-        while free_items:
-            items.remove(y_item)
-            free_items -= 1
-
-        total = count_x * item.price
-
-        items = [i for i in items if i != item] 
-        return total, items
+        return free_items * ITEMS[y_item]
 
     return offer
 
-ITEMS = {
-    'A': Item('A', 50, offers=[
-        buy_x_product_for_offer_price(Item('A', 50), 5, 200),
-        buy_x_product_for_offer_price(Item('A', 50), 3, 130),
-    ]),
-    'B': Item('B', 30, offers=[
-        buy_x_product_for_offer_price(Item('B', 30), 2, 45),
-    ]),
-    'C': Item('C', 20),
-    'D': Item('D', 15),
-    'E': Item('E', 40, offers=[
-        buy_x_get_y_free(Item('E', 40), 2, Item('B', 30), 1),
-    ]),
-    'F': Item('F', 10, offers=[
-        buy_x_get_y_free(Item('F', 10), 3, Item('F', 10), 1),
-        
-    ]),
-    'G': Item('G', 20),
-    'H': Item('H', 10, offers=[
-        buy_x_product_for_offer_price(Item('H', 10), 5, 45),
-        buy_x_product_for_offer_price(Item('H', 10), 10, 80),
-        ]),
-    'I': Item('I', 35),
-    'J': Item('J', 60),
-    'K': Item('K', 70, offers=[
-        buy_x_product_for_offer_price(Item('K', 70), 2, 150),
-    ]),
-    'L': Item('L', 90),
-    'M': Item('M', 15),
-    'N': Item('N', 40, offers=[
-        buy_x_get_y_free(Item('N', 40), 3, Item('M', 15), 1),
-    ]),
-    'O': Item('O', 10),
-    'P': Item('P', 50, offers=[
-        buy_x_product_for_offer_price(Item('P', 50), 5, 200),
-    ]),
-    'Q': Item('Q', 30, offers=[
-        buy_x_product_for_offer_price(Item('Q', 30), 3, 80),
-    ]),
-    'R': Item('R', 50, offers=[
-        buy_x_get_y_free(Item('R', 50), 3, Item('Q', 30), 1),
-    ]),
-    'S': Item('S', 30),
-    'T': Item('T', 20),
-    'U': Item('U', 40, offers=[
-        buy_x_get_y_free(Item('U', 40), 3, Item('U', 40), 1),
-    ]),
-    'V': Item('V', 50, offers=[
-        buy_x_product_for_offer_price(Item('V', 50), 2, 90),
-        buy_x_product_for_offer_price(Item('V', 50), 3, 130),
-    ]),
-    'W': Item('W', 20),
-    'X': Item('X', 90),
-    'Y': Item('Y', 10),
-    'Z': Item('Z', 50),
-}
+
+# Need to calculate the best price when there are multiple offers
+def calculate_best_price(qty: int, price: int, offers: List[Offer]) -> int:
+    """
+    Calculate the best price for a given quantity of items and a list of offers.
+    """
 
 
+def handle_offer(item: str, discounts: List[Discount], offers: List[Offer], count: Counter, total: int) -> Tuple[Counter, int]:
+    """
+    Handle the offer for a given item.
+    """
+    
+    # Sort discounts by item price
+    discounts.sort(key=lambda x: x.price/x.qty, reverse=True)
+    for discount in discounts:
+        if count[item] >= discount.qty:
+            groups = count[item] // discount.qty
+            remainder = count[item] % discount.qty
+
+            total += groups * discount.price 
+            count[item] = remainder
+
+    # Handle offers
+    for offer in offers:
+        if count[item] >= offer.qty:
+            groups = count[item] // offer.qty
+            remainder = count[item] % offer.qty
+
+            total += groups * PRICE[offer.offer_item]
+            count[offer.offer_item] -= groups * offer.offer_qty
+            count[item] = remainder
+
+    return count, total
 
 class CheckoutSolution:
 
     # skus = unicode string
     def checkout(self, skus):
-        count = Counter(skus)
-        total = 0
-
         if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
         
+        count = Counter(skus)
+        skus = set(skus)
+        total = 0
 
-        for item in ITEMS.values():
-            for offer in item.offers:
-        
-        # # Handle F
-        # group_of_F3 = count['F'] // 3
-        # rem_F3 = count['F'] % 3
-
-        # total += group_of_F3 * 20 + rem_F3 * 10
-
-        # # Handle E
-        # while count['E'] >= 2 and count['B'] >= 1:
-        #     count['B'] -= 1
-        #     count['E'] -= 2
-        #     total += 80
-        
-        # # Handle B
-        # while count['B'] >= 2:
-        #     count['B'] -= 2
-        #     total += 45
-
-        # # Handle A
-        # group_of_A5 = count['A'] // 5
-        # rem_A5 = count['A'] % 5 
-
-        # group_of_A3 = rem_A5 // 3
-        # rem_A3 = rem_A5 % 3
-
-        # total += group_of_A5 * 200 + group_of_A3 * 130 + rem_A3 * 50
+        for item in skus:
+            if item not in PRICE:
+                return -1
             
-        # # the remaining skus
-        # total += count['B'] * 30
-        # total += count['C'] * 20
-        # total += count['D'] * 15
-        # total += count['E'] * 40
+            discounts = [d for d in DISCOUNTS if d.item == item]
+            offers = [o for o in OFFERS if o.item == item]
+        
 
-        # return total
-       
+            count, total = self.handle_offer(item, discounts, offers, count, total)
+
+        return total
