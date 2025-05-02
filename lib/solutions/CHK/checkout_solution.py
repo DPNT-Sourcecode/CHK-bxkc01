@@ -84,63 +84,66 @@ OFFERS = [
 #         return total, items
 #     return offer
 
-def buy_x_get_y_free(x_item:str , x_qty: int, y_item: str, y_qty: int) -> Callable:
-    """
-    Buy x amount of item and get y amount of another item for free.
-    """
-    def offer(items: list[str]) -> int:
-        """
-        Calculate the discounted total for a given item and remove the items from the list.
-        """
-        count_x = items.count(x_item)
-        count_y = items.count(y_item)
+# def buy_x_get_y_free(x_item:str , x_qty: int, y_item: str, y_qty: int) -> Callable:
+#     """
+#     Buy x amount of item and get y amount of another item for free.
+#     """
+#     def offer(items: list[str]) -> int:
+#         """
+#         Calculate the discounted total for a given item and remove the items from the list.
+#         """
+#         count_x = items.count(x_item)
+#         count_y = items.count(y_item)
 
-        groups = count_x // x_qty * y_qty
-        free_items = min(count_y, groups)
+#         groups = count_x // x_qty * y_qty
+#         free_items = min(count_y, groups)
 
-        return free_items * ITEMS[y_item]
+#         return free_items * ITEMS[y_item]
 
-    return offer
-
-
-# Need to calculate the best price when there are multiple offers
-def calculate_best_price(qty: int, price: int, offers: List[Offer]) -> int:
-    """
-    Calculate the best price for a given quantity of items and a list of offers.
-    """
+#     return offer
 
 
-def handle_offer(item: str, discounts: List[Discount], offers: List[Offer], count: Counter, total: int) -> Tuple[Counter, int]:
-    """
-    Handle the offer for a given item.
-    """
-    
-    # Sort discounts by item price
-    discounts.sort(key=lambda x: x.price/x.qty, reverse=True)
-    for discount in discounts:
-        if count[item] >= discount.qty:
-            groups = count[item] // discount.qty
-            remainder = count[item] % discount.qty
+# # Need to calculate the best price when there are multiple offers
+# def calculate_best_price(qty: int, price: int, offers: List[Offer]) -> int:
+#     """
+#     Calculate the best price for a given quantity of items and a list of offers.
+#     """
 
-            total += groups * discount.price 
-            count[item] = remainder
 
-    # Handle offers
-    for offer in offers:
-        if count[item] >= offer.qty:
-            groups = count[item] // offer.qty
-            remainder = count[item] % offer.qty
-
-            total += groups * PRICE[offer.offer_item]
-            count[offer.offer_item] -= groups * offer.offer_qty
-            count[item] = remainder
-
-    return count, total
 
 class CheckoutSolution:
 
     # skus = unicode string
     def checkout(self, skus):
+        def handle_offer(item: str, discounts: List[Discount], offers: List[Offer], count: Counter, total: int) -> Tuple[Counter, int]:
+            """
+            Handle the offer for a given item.
+            """
+            
+            # Sort discounts by item price
+            discounts.sort(key=lambda x: x.price/x.qty, reverse=True)
+            for discount in discounts:
+                if count[item] >= discount.qty:
+                    groups = count[item] // discount.qty
+                    remainder = count[item] % discount.qty
+
+                    total += groups * discount.price 
+                    count[item] = remainder
+
+            # Handle offers
+            for offer in offers:
+                if count[item] >= offer.qty:
+                    groups = count[item] // offer.qty
+                    remainder = count[item] % offer.qty
+
+                    total += groups * PRICE[offer.offer_item]
+                    count[offer.offer_item] -= groups * offer.offer_qty
+                    count[item] = remainder
+
+            return count, total
+
+
+        
         if any(not sku.isalpha() or not sku.isupper() for sku in skus):
             return -1
         
@@ -156,6 +159,8 @@ class CheckoutSolution:
             offers = [o for o in OFFERS if o.item == item]
         
 
-            count, total = self.handle_offer(item, discounts, offers, count, total)
+            count, total = handle_offer(item, discounts, offers, count, total)
 
         return total
+
+
